@@ -3,119 +3,85 @@ export_on_save:
   html: true
 ---
 
-# seminario-1
+# Abstract Factory 
 
-## Markdown
-
-
-- item
-- item
-- item
-
-
-
-1. valor
-2. valor
-3. valor
-
-| title1 | title2 |
-| ------ | ------ |
-| a      | b      |
-
-
-[Markdown](https://docs.github.com/pt/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
-
-## Plantuml
 
 ```plantuml {align="center"}
 @startuml
-title: Animal example
-note "From Duck till Zebra" as n1
-class Animal{
-    +int age
-    +String gender
-    + boolean isMammal()
-    + void mate()
+title: UML Connection Factory
+
+package command {
+    interface DatabaseCommand {
+        + void execute()
+    }
+
+    class MySQLCommand implements DatabaseCommand{
+        + void execute()
+    }
+
+    class PostgreSQLCommand implements DatabaseCommand{
+        + void execute()
+    }
 }
-'para a heranca ficar para baixo
-class Duck extends Animal{
-    +String beakColor
-    +swim()
-    +quack()
-}
-class Fish{
-    -int sizeInFeet
-    -canEat()
-}
-class Zebra{    
-    +bool is_wild
-    +run()
+package connection {
+    interface DatabaseConnection {
+        + void connect()
+    }
+
+    class MySQLConnection implements DatabaseConnection{
+        + void connect()
+    }
+
+    class PostgreSQLConnection implements DatabaseConnection{
+        + void connect()
+    }
 }
 
-class Duck
-note left: can fly\ncan swim\ncan dive\ncan help in debugging
+package factory {
+    interface DatabaseFactory {
+        + DatabaseConnection createConnection()
+        + DatabaseCommand createCommand()
+    }
 
-'para a heranca ficar para o lado
-Animal <|- Zebra 
+    class MySQLFactory implements DatabaseFactory{
+        + DatabaseConnection createConnection()
+        + DatabaseCommand createCommand()
+    }
 
-'para a heranca ficar para baixo
-Animal <|-- Fish 
+    class PosstgreSQLFactory implements DatabaseFactory{
+        + DatabaseConnection createConnection()
+        + DatabaseCommand createCommand()
+    }
+}
+
 
 @enduml
 ```
-[PlantUML Class Diagram](https://plantuml.com/class-diagram)
 
-## Mermaid
+### `DatabaseFactory` (Interface)
+- Define métodos para criar **conexões** e **comandos SQL**.
+- Implementada por fábricas concretas para cada banco de dados.
 
-```mermaid {align="center"}
----
-title: Animal example
----
-classDiagram
-    note "From Duck till Zebra"
-    Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
-    Animal <|-- Fish
-    Animal <|-- Zebra
-    Animal : +int age
-    Animal : +String gender
-    Animal: +isMammal()
-    Animal: +mate()
-    class Duck{
-        +String beakColor
-        +swim()
-        +quack()
-    }
-    class Fish{
-        -int sizeInFeet
-        -canEat()
-    }
-    class Zebra{
-        +bool is_wild
-        +run()
-    }
+### `MySQLFactory` e `PostgreSQLFactory` (Classes concretas)
+- Implementam `DatabaseFactory`, criando objetos específicos para **MySQL** e **PostgreSQL**.
+- Retornam instâncias das classes:
+  - `MySQLConnection`
+  - `MySQLCommand`
+  - `PostgreSQLConnection`
+  - `PostgreSQLCommand`
 
-```
+### `DatabaseConnection` (Interface)
+- Define o método `connect()`, padronizando a forma como os bancos realizam conexões.
 
-[Mermaid Class Diagram](https://mermaid.js.org/syntax/classDiagram.html)
+### `MySQLConnection` e `PostgreSQLConnection` (Classes concretas)
+- Implementam `DatabaseConnection`, cada uma realizando a conexão com seu respectivo banco.
 
+### `DatabaseCommand` (Interface)
+- Define `execute(String query)`, permitindo que comandos SQL sejam executados.
 
-## Markdown Preview Enhanced
+### `MySQLCommand` e `PostgreSQLCommand` (Classes concretas)
+- Implementam `DatabaseCommand`, adaptando a execução de queries para cada banco.
 
-[Markdown Preview Enhanced](https://shd101wyy.github.io/markdown-preview-enhanced/#/)
-
-
-@import "src/Classe.java"
-
-### HTML Export
-
-[html-export](https://shd101wyy.github.io/markdown-preview-enhanced/#/html?id=html-export)
-
-
-Right click at the preview, click HTML tab.
-Then choose:
-
-HTML (offline) Choose this option if you are only going to use this html file locally.
-HTML (cdn hosted) Choose this option if you want to deploy your html file remotely.
-
-![screen shot 2017-07-14 at 1 14 28 am](https://user-images.githubusercontent.com/1908863/28200455-d5a12d60-6831-11e7-8572-91d3845ce8cf.png)
+### `AbstractFactoryDatabaseExample` (Classe Cliente)
+- **Depende apenas de `DatabaseFactory`** para criar conexões e comandos.
+- Pode **trocar dinamicamente** de banco apenas instanciando uma fábrica diferente.
