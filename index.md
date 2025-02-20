@@ -9,6 +9,7 @@ export_on_save:
 
 Ao desenvolver aplicações que suportam múltiplos bancos de dados, é comum enfrentar o problema de dependência direta de um banco específico, tornando o código rígido e difícil de manter. Cada banco pode ter sua própria forma de conexão e execução de comandos SQL, exigindo ajustes manuais ao trocar de tecnologia. O padrão Abstract Factory resolve esse problema ao desacoplar a criação dos objetos responsáveis pela conexão e execução de comandos, permitindo que a aplicação funcione de forma genérica, criando instâncias apropriadas conforme o banco de dados selecionado. Isso facilita a manutenção, melhora a escalabilidade e permite que a aplicação suporte novos bancos sem modificar seu código principal.
 
+
 ```plantuml {align="center"}
 @startuml
 title: UML Connection Factory
@@ -60,6 +61,8 @@ package factory {
 
 @enduml
 ```
+
+## Membros 
 
 ### `DatabaseFactory` (Interface)
 - Define métodos para criar **conexões** e **comandos SQL**.
